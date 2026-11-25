@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHOCO CRAFT | Chocolate Shop</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#1b120e;color:#f8ead8;font-family:Arial,Tahoma,sans-serif}
+header{padding:22px 8%;display:flex;justify-content:space-between;align-items:center;background:#120c09;border-bottom:1px solid #63432d}
+.logo{font-size:25px;font-weight:bold;color:#d9b477;letter-spacing:3px}
+nav a{color:#f8ead8;text-decoration:none;margin-left:20px}
+.hero{text-align:center;padding:90px 20px;background:linear-gradient(135deg,#402518,#170e0a)}
+.hero h1{font-size:55px;color:#e6c18b;margin:10px}
+.hero p{color:#dbc8b5;font-size:18px}
+button{background:#d9b477;border:0;padding:12px 22px;border-radius:25px;font-weight:bold;cursor:pointer}
+section{padding:55px 8%}
+h2{text-align:center;font-size:32px;color:#e6c18b}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:25px;max-width:850px;margin:30px auto}
+.card{background:#302019;border:1px solid #63432d;border-radius:16px;padding:25px;text-align:center}
+.chocolate{font-size:90px;padding:20px}
+.price{font-size:24px;color:#e6c18b;font-weight:bold}
+.cart{max-width:850px;margin:auto;background:#302019;padding:25px;border-radius:15px}
+input,textarea{width:100%;padding:12px;margin:8px 0;background:#170e0a;border:1px solid #63432d;color:white;border-radius:8px}
+footer{text-align:center;padding:25px;color:#c5ae98;border-top:1px solid #63432d}
+@media(max-width:600px){.products{grid-template-columns:1fr}.hero h1{font-size:38px}nav a{margin-left:8px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">CHOCO CRAFT</div>
+<nav><a href="#products">สินค้า</a><a href="#order">สั่งซื้อ</a></nav>
+</header>
+
+<div class="hero">
+<p>HANDMADE PREMIUM CHOCOLATE</p>
+<h1>ความสุขในทุกชิ้น</h1>
+<p>ช็อกโกแลตคุณภาพดี ทำด้วยความใส่ใจ</p>
+<a href="#products"><button>เลือกซื้อสินค้า</button></a>
+</div>
+
+<section id="products">
+<h2>OUR CHOCOLATE</h2>
+<div class="products">
+<div class="card">
+<div class="chocolate">🍫</div>
+<h3>Dark Chocolate 70%</h3>
+<p>ดาร์กช็อกโกแลตเข้มข้น 70%</p>
+<p class="price">89 บาท</p>
+<button onclick="add('Dark Chocolate 70%',89)">เพิ่มลงตะกร้า</button>
+</div>
+<div class="card">
+<div class="chocolate">🍫</div>
+<h3>Milk Chocolate</h3>
+<p>มิลค์ช็อกโกแลต หวานละมุน</p>
+<p class="price">79 บาท</p>
+<button onclick="add('Milk Chocolate',79)">เพิ่มลงตะกร้า</button>
+</div>
+</div>
+</section>
+
+<section id="order">
+<h2>ตะกร้าสินค้าและสั่งซื้อ</h2>
+<div class="cart">
+<div id="items">ยังไม่มีสินค้า</div>
+<h3 id="total">รวม 0 บาท</h3>
+<h3>ข้อมูลจัดส่ง</h3>
+<form onsubmit="sendOrder(event)">
+<input id="name" placeholder="ชื่อ-นามสกุล" required>
+<input id="phone" placeholder="เบอร์โทรศัพท์" required>
+<textarea id="address" placeholder="ที่อยู่จัดส่ง" required></textarea>
+<button type="submit">ยืนยันคำสั่งซื้อ</button>
+</form>
+<p id="result"></p>
+</div>
+</section>
+
+<footer>© 2026 CHOCO CRAFT | Premium Chocolate Shop</footer>
+
+<script>
+let cart=[];
+function add(name,price){
+cart.push({name,price});
+showCart();
+}
+function showCart(){
+document.getElementById('items').innerHTML=cart.length?
+cart.map((p,i)=>`<p>${p.name} - ${p.price} บาท <button onclick="removeItem(${i})">ลบ</button></p>`).join(''):'ยังไม่มีสินค้า';
+document.getElementById('total').textContent='รวม '+cart.reduce((s,p)=>s+p.price,0)+' บาท';
+}
+function removeItem(i){cart.splice(i,1);showCart();}
+function sendOrder(e){
+e.preventDefault();
+if(!cart.length){alert('กรุณาเลือกสินค้าก่อน');return;}
+const order={
+name:document.getElementById('name').value,
+phone:document.getElementById('phone').value,
+address:document.getElementById('address').value,
+items:cart,
+total:cart.reduce((s,p)=>s+p.price,0)
+};
+let orders=JSON.parse(localStorage.getItem('chocoOrders')||'[]');
+orders.push(order);
+localStorage.setItem('chocoOrders',JSON.stringify(orders));
+document.getElementById('result').textContent='รับคำสั่งซื้อแล้ว! ขอบคุณที่อุดหนุน CHOCO CRAFT';
+cart=[];showCart();e.target.reset();
+}
+showCart();
+</script>
+</body>
+</html>
